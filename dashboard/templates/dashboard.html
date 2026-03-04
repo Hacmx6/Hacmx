@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>HACMX Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <header>
+        <h1>HACMX Dashboard</h1>
+        <p>Histórico de scans realizados</p>
+    </header>
+
+    <main>
+        {% if scans %}
+            {% for scan in scans|reverse %}
+            <section class="scan-card">
+                <h2>{{ scan.Dominio }} - {{ scan.Timestamp }}</h2>
+                <ul>
+                    <li><strong>IP:</strong> {{ scan.IP }}</li>
+                    <li><strong>Reverse DNS:</strong> {{ scan["Reverse DNS"] }}</li>
+                    <li><strong>Subdomínios:</strong> {{ scan.Subdominios | join(", ") if scan.Subdominios else "Nenhum" }}</li>
+                    <li><strong>Portas Abertas:</strong> {{ scan["Portas Abertas"] | join(", ") if scan["Portas Abertas"] else "Nenhuma" }}</li>
+                    <li><strong>Tecnologias:</strong> {{ scan.Tecnologias | join(", ") if scan.Tecnologias else "Não identificado" }}</li>
+                    <li><strong>Headers:</strong> {{ scan.Headers if scan.Headers else "{}" }}</li>
+
+                    <li><strong>SSL:</strong> {{ scan.SSL if scan.SSL else "{}" }}</li>
+                    <li><strong>GeoIP:</strong> {{ scan.GeoIP if scan.GeoIP else "{}" }}</li>
+                    <li><strong>Score de Segurança:</strong> {{ scan.Score }}/100</li>
+                    <li><strong>Problemas:</strong>
+                        {% if scan.Problemas %}
+                            <ul>
+                                {% for p in scan.Problemas %}
+                                    <li>{{ p }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            Nenhum
+                        {% endif %}
+                    </li>
+                </ul>
+            </section>
+            {% endfor %}
+        {% else %}
+            <p>Nenhum scan encontrado ainda.</p>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>HACMX Dashboard © 2026</p>
+    </footer>
+</body>
+</html>
